@@ -1,0 +1,6 @@
+<h5>Your Contacts</h5>
+<ul class="list-group">
+    {% for contact in contacts %}
+        <li class="list-group-item">{{ contact.username }}</li>
+    {% endfor %}
+</ul>

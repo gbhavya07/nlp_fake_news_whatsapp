@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Clone</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .chat-container {
+            display: flex;
+            height: 80vh;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+            background-color: white;
+        }
+
+        .contacts {
+            width: 30%;
+            background-color: #f8f9fa;
+            border-right: 1px solid #ddd;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .contacts .list-group-item {
+            cursor: pointer;
+            border: none;
+            padding: 15px 12px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background-color: #ffffff;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .contacts .list-group-item:hover {
+            background-color: #e9f5e3;
+            transform: scale(1.02);
+        }
+
+        .contacts .list-group-item d-flex {
+            align-items: center;
+        }
+
+        /* Blank profile picture */
+        .blank-profile {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-image: url('https://www.w3schools.com/w3images/avatar2.png'); /* Silhouette image */
+            background-size: cover;
+            margin-right: 15px;
+        }
+
+        .chat {
+            width: 70%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background-color: #25D366;
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .message {
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 15px;
+            font-size: 14px;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+
+        .message.sent {
+            background-color: #d1f7c4;
+            align-self: flex-end;
+            text-align: right;
+            margin-right: 10px;
+        }
+
+        .message.received {
+            background-color: #f0f0f0;
+            align-self: flex-start;
+            text-align: left;
+            margin-left: 10px;
+        }
+
+        .message-header {
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .fake {
+            color: red;
+            font-weight: bold;
+        }
+
+        .real {
+            color: green;
+            font-weight: bold;
+        }
+
+        .message-input {
+            display: flex;
+            gap: 15px;
+            padding-top: 15px;
+        }
+
+        .message-input textarea {
+            flex-grow: 1;
+            border-radius: 15px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            resize: none;
+        }
+
+        .message-input button {
+            background-color: #25D366;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-weight: bold;
+            padding: 10px 20px;
+            transition: background-color 0.3s;
+        }
+
+        .message-input button:hover {
+            background-color: #1caa5a;
+        }
+
+        .navbar {
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+            padding: 15px;
+        }
+
+        .navbar-brand {
+            color: #25D366;
+            font-size: 26px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand img {
+            width: 32px;
+            height: 32px;
+            margin-right: 10px;
+        }
+
+        .navbar-text {
+            color: #333;
+        }
+
+        .contacts h5 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #25D366;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chat-header h5 {
+            font-size: 20px;
+            color: #fff;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .chat-container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .contacts {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .chat {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .message-input textarea {
+                font-size: 16px;
+                padding: 10px;
+            }
+
+            .navbar-brand {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/2560px-WhatsApp.svg.png" alt="WhatsApp Logo">
+                WhatsApp Clone
+            </a>
+            <div class="d-flex">
+                {% if current_user.is_authenticated %}
+                    <span class="navbar-text mr-3"><b>Welcome, {{ current_user.username }}</b></span>
+                    <a class="btn btn-outline-danger" href="/logout">Logout</a>
+                {% else %}
+                    <a class="btn btn-outline-success" href="/login">Login</a>
+                    <a class="btn btn-outline-primary" href="/signup">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container chat-container mt-4">
+        <!-- Contact List -->
+        <div class="contacts">
+            <h5>Contacts</h5>
+            <ul class="list-group">
+                {% for contact in contacts %}
+                    <li class="list-group-item d-flex align-items-center">
+                        <!-- Blank profile picture -->
+                        <div class="blank-profile"></div>
+                        <a href="/chat/{{ contact.id }}" class="text-dark">{{ contact.username }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Chat Section -->
+        <div class="chat">
+            <div class="chat-header">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/2560px-WhatsApp.svg.png" alt="WhatsApp Logo">
+                <h5>
+                    {% if active_contact %}
+                        Chat with {{ active_contact.username }}
+                    {% else %}
+                        Select a contact to start chatting
+                    {% endif %}
+                </h5>
+            </div>
+
+            <div>
+                {% if active_contact and messages %}
+                    {% for message in messages %}
+                        <div class="message {% if message.sender == current_user.username %}sent{% else %}received{% endif %}">
+                            <p class="message-header">
+                                {% if message.sender == current_user.username %}
+                                    You:
+                                {% else %}
+                                    {{ message.sender }}:
+                                {% endif %}
+                            </p>
+                            <p>{{ message.message_text }}</p>
+                            <p><small class="text-muted">{{ message.timestamp }}</small></p>
+                            {% if message.status == "FAKE" %}
+                                <p class="fake">🚩 FAKE</p> <!-- Flagging fake messages -->
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No messages to display.</p>
+                {% endif %}
+            </div>
+
+            {% if current_user.is_authenticated and active_contact %}
+                <form method="POST" action="/send_message" class="message-input">
+                    <textarea name="message_text" class="form-control" rows="2" placeholder="Type a message"></textarea>
+                    <input type="hidden" name="receiver" value="{{ active_contact.username }}">
+                    <input type="hidden" name="sender" value="{{ current_user.username }}">
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </form>
+            {% elif not current_user.is_authenticated %}
+                <p class="text-muted">Please <a href="/login">log in</a> to start chatting.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>
