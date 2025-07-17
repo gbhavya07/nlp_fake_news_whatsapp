@@ -24,5 +24,5 @@ A Flask-based web app that detects fake news shared through WhatsApp-style messa
 - **ML:** scikit-learn, pandas, nltk
 - **Database:** SQLite (optional)
 
-## 🗂 Folder Structure
+
 
